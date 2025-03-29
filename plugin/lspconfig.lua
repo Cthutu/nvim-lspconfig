@@ -90,9 +90,7 @@ end, {
 api.nvim_create_user_command('LspRestart', function(info)
   local detach_clients = {}
   for _, client in ipairs(get_clients_from_cmd_args(info.args)) do
-    -- Can remove diagnostic disabling when changing to client:stop() in nvim 0.11+
-    --- @diagnostic disable: missing-parameter
-    client.stop()
+    client:stop()
     if vim.tbl_count(client.attached_buffers) > 0 then
       detach_clients[client.name] = { client, lsp.get_buffers_by_client_id(client.id) }
     end
@@ -105,7 +103,7 @@ api.nvim_create_user_command('LspRestart', function(info)
       for client_name, tuple in pairs(detach_clients) do
         if require('lspconfig.configs')[client_name] then
           local client, attached_buffers = unpack(tuple)
-          if client.is_stopped() then
+          if client:is_stopped() then
             for _, buf in pairs(attached_buffers) do
               require('lspconfig.configs')[client_name].launch(buf)
             end
@@ -144,9 +142,7 @@ api.nvim_create_user_command('LspStop', function(info)
   end
 
   for _, client in ipairs(clients) do
-    -- Can remove diagnostic disabling when changing to client:stop(force) in nvim 0.11+
-    --- @diagnostic disable: param-type-mismatch
-    client.stop(force)
+    client:stop(force)
   end
 end, {
   desc = 'Manually stops the given language client(s)',
