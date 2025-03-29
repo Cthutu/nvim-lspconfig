@@ -163,7 +163,7 @@ function configs.__newindex(t, config_name, config_def)
     local reload = false
     if M.manager then
       for _, client in ipairs(M.manager:clients()) do
-        client.stop(true)
+        client:stop(true)
       end
       reload = true
       M.manager = nil
